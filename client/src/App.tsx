@@ -7,11 +7,11 @@ function App() {
 
 
   return (
-      <div>
-        <h1>Jobot system</h1>
-        <br />
-        <Auth></Auth>
-      </div>
+    <div>
+      <h1>Jobot system</h1>
+      <br />
+      <Auth></Auth>
+    </div>
   )
 }
 
