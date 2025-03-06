@@ -14,8 +14,8 @@ export async function sendMessage (req: any, res: any) {
   
       await newMessage.save();
 
-      socketIo.io.to(message.receiverId).emit('receiveMessage', newMessage);
-      socketIo.io.to(message.senderId).emit('receiveMessage', newMessage);
+      // socketIo.io.to(message.receiverId).emit('receiveMessage', newMessage);
+      // socketIo.io.to(message.senderId).emit('receiveMessage', newMessage);
       res.status(201).json(message);
       return newMessage;
     } catch (error) {
