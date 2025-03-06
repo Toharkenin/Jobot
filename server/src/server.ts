@@ -1,5 +1,6 @@
 import express from 'express'
 import authRoutes from "./Routes/authRoutes";
+import employerRoutes from "./Routes/employerRoutes"
 import cookieParser from 'cookie-parser';
 import cors from "cors"
 import mongoose from 'mongoose';
@@ -8,6 +9,8 @@ import jobRoutes from './Routes/jobRoutes';
 import { Server } from "socket.io";
 import http from 'http'
 import { sendMessage } from './Controllers/message/sendMessage';
+import userPreferencesRouter from "./Routes/userRoutes";
+
 
 const app = express()
 const port = 3000;
@@ -15,7 +18,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.static('public'));
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174'], // Array of allowed origins
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:5176'], // Array of allowed origins
   credentials: true
 }));
 
@@ -23,9 +26,10 @@ app.use(cors({
 export const secretKey = String(process.env.SECRET_JWT) || "1234";
 export const saltRounds = Number(process.env.SALT_BCRYPT) || 3;
 
-
+app.use("/api/user", userPreferencesRouter);
 app.use("/api/auth", authRoutes);
 app.use("/api/jobs", jobRoutes);
+app.use("/api/employer/jobs", employerRoutes);
 
 
 const dbUrl = process.env.DB_URL;
@@ -50,22 +54,22 @@ const io = new Server(server, {
   },
 });
 
-io.on('connection', (socket) => {
-  console.log('A user connected');
+// io.on('connection', (socket) => {
+//   console.log('A user connected');
 
-  socket.on('sendMessage', async (message) => {
-    try {
-      await sendMessage(message);
-    } catch (error) {
-      console.error('Error handling sendMessage:', error);
-    }
-  });
+//   socket.on('sendMessage', async (message) => {
+//     try {
+//       await sendMessage(message);
+//     } catch (error) {
+//       console.error('Error handling sendMessage:', error);
+//     }
+//   });
 
-  socket.on('joinRoom', (userId) => {
-    socket.join(userId);
-  });
+//   socket.on('joinRoom', (userId) => {
+//     socket.join(userId);
+//   });
 
-  socket.on('disconnect', () => {
-    console.log('A user disconnected');
-  });
-});
+//   socket.on('disconnect', () => {
+//     console.log('A user disconnected');
+//   });
+// });
