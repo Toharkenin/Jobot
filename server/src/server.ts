@@ -10,6 +10,7 @@ import { Server } from "socket.io";
 import http from 'http'
 import { sendMessage } from './Controllers/message/sendMessage';
 import userPreferencesRouter from "./Routes/userRoutes";
+import chatRoutes from './Routes/chatRoutes'
 
 
 const app = express()
@@ -30,6 +31,7 @@ app.use("/api/user", userPreferencesRouter);
 app.use("/api/auth", authRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/employer/jobs", employerRoutes);
+app.use("/api/chat", chatRoutes);
 
 
 const dbUrl = process.env.DB_URL;

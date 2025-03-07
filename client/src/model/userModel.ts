@@ -4,9 +4,9 @@ export interface User {
     email: string;
     password: string;
     phoneNumber: string;
-    aiData: string;
-    workExperience: string;
-    isHiring: boolean;
-    isCandidate: boolean;
+    aiData?: string;
+    workExperience?: string;
+    isHiring?: boolean;
+    isCandidate?: boolean;
   }
   

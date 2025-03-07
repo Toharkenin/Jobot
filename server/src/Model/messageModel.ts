@@ -1,4 +1,4 @@
-import { Types,Schema, model } from "mongoose";
+import { Types, Schema, model } from "mongoose";
 
 
 const MessageSchema = new Schema({
@@ -7,5 +7,14 @@ const MessageSchema = new Schema({
     content:String,
     sentAt:Date,
     isRead:Boolean
-})
+});
+
+const ChatSchema = new Schema({
+    users: [{ type: Types.ObjectId, ref: "User", required: true }],
+    messages: [MessageSchema], 
+    lastUpdated: { type: Date, default: Date.now },
+  });
+
+
 export const MessageModel = model("Message",MessageSchema);
+export const ChatModel = model("Chat",ChatSchema);
