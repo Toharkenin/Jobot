@@ -1,26 +1,32 @@
-import { MessageModel } from '../../Model/messageModel';
+import { ChatModel } from "../../Model/messageModel";
+import { io } from '../../server'
 
 
-export async function sendMessage (req: any, res: any) {
+export const sendMessage = async (req: any, res: any) => {
+  try {
+    const { chatId } = req.params;
+    const { senderId, content } = req.body;
 
-    const { message } = req.body;
-    try {
-      const newMessage = new MessageModel({
-        senderId: message.senderId,
-        receiverId: message.receiverId,
-        content: message.content,
-        sentAt: new Date(),
-      });
-  
-      await newMessage.save();
-
-      // socketIo.io.to(message.receiverId).emit('receiveMessage', newMessage);
-      // socketIo.io.to(message.senderId).emit('receiveMessage', newMessage);
-      res.status(201).json(message);
-      return newMessage;
-    } catch (error) {
-      console.error('Error saving message:', error);
-      res.status(500).json({ error: message });
+    const chat = await ChatModel.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
     }
-  };
-  
+
+    const newMessage = {
+      senderId,
+      content,
+      sentAt: new Date(),
+      isRead: false,
+    };
+
+    chat.messages.push(newMessage);
+    chat.lastUpdated = new Date();
+    await chat.save();
+
+    io.to(chatId).emit("newMessage", newMessage);
+
+    res.status(201).json(newMessage);
+  } catch (error) {
+    res.status(500).json({ message: "Error sending message", error });
+  }
+};

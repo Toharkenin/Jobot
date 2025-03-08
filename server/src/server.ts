@@ -11,6 +11,7 @@ import http from 'http'
 import { sendMessage } from './Controllers/message/sendMessage';
 import userPreferencesRouter from "./Routes/userRoutes";
 import chatRoutes from './Routes/chatRoutes'
+import { ChatModel } from './Model/messageModel';
 
 
 const app = express()
@@ -56,22 +57,35 @@ const io = new Server(server, {
   },
 });
 
-// io.on('connection', (socket) => {
-//   console.log('A user connected');
+io.on('connection', (socket) => {
+  console.log('A user connected');
 
-//   socket.on('sendMessage', async (message) => {
-//     try {
-//       await sendMessage(message);
-//     } catch (error) {
-//       console.error('Error handling sendMessage:', error);
-//     }
-//   });
+  socket.on("sendMessage", async ({ chatId, senderId, content }) => {
+    const chat = await ChatModel.findById(chatId);
+    if (!chat) return;
 
-//   socket.on('joinRoom', (userId) => {
-//     socket.join(userId);
-//   });
+    const newMessage = {
+      senderId,
+      content,
+      sentAt: new Date(),
+      isRead: false,
+    };
 
-//   socket.on('disconnect', () => {
-//     console.log('A user disconnected');
-//   });
-// });
+    chat.messages.push(newMessage);
+    chat.lastUpdated = new Date();
+    await chat.save();
+
+    io.to(chatId).emit("newMessage", newMessage);
+  });
+
+  socket.on("joinChat", (chatId) => {
+    socket.join(chatId);
+    console.log(`User joined chat room: ${chatId}`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
+});
+
+export { io };
