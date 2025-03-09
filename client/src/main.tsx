@@ -19,8 +19,6 @@ import JobCandidate from "./view/pages/jobCandidate/JobCandidate.tsx";
 import Results from "./view/pages/results/Results.tsx";
 import App from "./App.tsx";
 
-
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
