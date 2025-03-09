@@ -7,6 +7,10 @@ export const sendMessage = async (req: any, res: any) => {
     const { chatId } = req.params;
     const { senderId, content } = req.body;
 
+    // let chat = await ChatModel.findOne({
+    //   participants: { $all: [senderId, receiverId] },
+    // });
+    
     const chat = await ChatModel.findById(chatId);
     if (!chat) {
       return res.status(404).json({ message: "Chat not found" });

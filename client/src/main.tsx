@@ -17,36 +17,39 @@ import Home from "./view/pages/home/Home.tsx";
 import Login from "./view/pages/login/Login.tsx";
 import JobCandidate from "./view/pages/jobCandidate/JobCandidate.tsx";
 import Results from "./view/pages/results/Results.tsx";
+import App from "./App.tsx";
 
 
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
+      {/* //     <BrowserRouter>
 
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
+  //       <Routes>
+  //         <Route path="/" element={<Home />} />
+  //         <Route path="/login" element={<Login />} />
 
-          <Route path="/candidate" element={<Candidate />}>
-            <Route index element={<Results />} />
-            <Route path="job-candidate/:jobId" element={<JobCandidate />} />
-            <Route path=":userId" element={<Results />} />
-            <Route path="job-application/:user-jobId" element={<JobApplication />} />
-            <Route path="chat" element={<Chat />} />
-          </Route>
-          <Route path="employer" element={<EmployerWrapper />}>
-            <Route index element={<JobsEmployer />} />
-            <Route path="candidates" element={<JobCandidate />} />
-            <Route path="applications" element={<JobApplication />} />
-            <Route path="applications/status" element={<ApplicationStatus />} />
-            <Route path="chat" element={<Chat />} />
-          </Route>
-          <Route path="*" element={<div>Not Found</div>} />
-        </Routes>
+  //         <Route path="/candidate" element={<Candidate />}>
+  //           <Route index element={<Results />} />
+  //           <Route path="job-candidate/:jobId" element={<JobCandidate />} />
+  //           <Route path=":userId" element={<Results />} />
+  //           <Route path="job-application/:user-jobId" element={<JobApplication />} />
+  //           <Route path="chat" element={<Chat />} />
+  //         </Route>
+  //         <Route path="employer" element={<EmployerWrapper />}>
+  //           <Route index element={<JobsEmployer />} />
+  //           <Route path="candidates" element={<JobCandidate />} />
+  //           <Route path="applications" element={<JobApplication />} />
+  //           <Route path="applications/status" element={<ApplicationStatus />} />
+  //           <Route path="chat" element={<Chat />} />
+  //         </Route>
+  //         <Route path="*" element={<div>Not Found</div>} />
+  //       </Routes>
 
-      </BrowserRouter>
-    </Provider>
-  </StrictMode>,
+  //     </BrowserRouter> */}
+      <Chat />
+  //   </Provider>
+  // </StrictMode>,
+
 )

@@ -10,7 +10,6 @@ export const getChats = async (req: any, res: any) => {
     }
 
     const chats = await ChatModel.find({ senderId: userId,
-        isRead: false,
      }).sort({ sentAt: -1 });
 
     res.status(200).json(chats);

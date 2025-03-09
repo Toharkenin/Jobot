@@ -10,7 +10,8 @@ const MessageSchema = new Schema({
 });
 
 const ChatSchema = new Schema({
-    users: [{ type: Types.ObjectId, ref: "User", required: true }],
+    user: { type: Types.ObjectId, ref: "User", required: true },
+    employer: {type: Types.ObjectId, ref: "Employer", required: true},
     messages: [MessageSchema], 
     lastUpdated: { type: Date, default: Date.now },
   });

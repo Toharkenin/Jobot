@@ -50,42 +50,11 @@ app.listen(port, () => {
 
 //socket connection
 const server = http.createServer(app); 
-const io = new Server(server, {
+export const io = new Server(server, {
   cors: {
     origin: 'http://localhost:3000',
     methods: ['GET', 'POST'],
   },
 });
 
-io.on('connection', (socket) => {
-  console.log('A user connected');
 
-  socket.on("sendMessage", async ({ chatId, senderId, content }) => {
-    const chat = await ChatModel.findById(chatId);
-    if (!chat) return;
-
-    const newMessage = {
-      senderId,
-      content,
-      sentAt: new Date(),
-      isRead: false,
-    };
-
-    chat.messages.push(newMessage);
-    chat.lastUpdated = new Date();
-    await chat.save();
-
-    io.to(chatId).emit("newMessage", newMessage);
-  });
-
-  socket.on("joinChat", (chatId) => {
-    socket.join(chatId);
-    console.log(`User joined chat room: ${chatId}`);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('A user disconnected');
-  });
-});
-
-export { io };

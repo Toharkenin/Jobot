@@ -1,4 +1,5 @@
 import styles from './Chat.module.scss'
+import { ChatVM } from './ChatVM';
 
 interface Chat {
   senderName: string,
@@ -12,19 +13,18 @@ interface Chat {
 
 function Chat() {
 
-  const chatsList: Chat[] = [];
+  const { chats } = ChatVM();
 
   return (
     <div className={styles.container}>
       <div className={styles.chatContainer}>
         <div className={styles.chatsList}>
-          {chatsList.map((chat, index) => (
+          {chats && chats.map((chat, index) => (
             <div key={index}>
               <div className={styles.chatTitle}>
-                <p>{chat.jobName}</p>
-                <p>{chat.jobCity}</p>
+                <p>{chat.content}</p>
               </div>
-              <h3>{chat.senderName}</h3>
+              {/* <h3>{chat.senderName}</h3> */}
             </div>
           ))}
         </div>
