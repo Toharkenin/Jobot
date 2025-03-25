@@ -1,7 +1,6 @@
 import express from 'express'
 import authRoutes from "./Routes/authRoutes";
-import employerRoutes from "./Routes/employerRoutes"
-import cookieParser from 'cookie-parser';
+import employerRoutes from "./Routes/employerRoutes";
 import cors from "cors"
 import mongoose from 'mongoose';
 import 'dotenv/config';
@@ -11,12 +10,15 @@ import chatRoutes from './Routes/chatRoutes'
 import http from 'http';
 import { Server } from 'socket.io';
 import setupChatSocket from './sockets/chatSocket';
+import chatRoutes from './Routes/chatRoutes';
+import cookieParser from 'cookie-parser';
 
 
 const app = express()
 const port = 3000;
-app.use(cookieParser());
+
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.static('public'));
 app.use(cors({
   origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:5176'], // Array of allowed origins
