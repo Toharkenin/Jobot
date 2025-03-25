@@ -6,12 +6,13 @@ import mongoose from 'mongoose';
 import 'dotenv/config';
 import jobRoutes from './Routes/jobRoutes';
 import userPreferencesRouter from "./Routes/userRoutes";
+
 import chatRoutes from './Routes/chatRoutes'
 import http from 'http';
 import { Server } from 'socket.io';
 import setupChatSocket from './sockets/chatSocket';
-import chatRoutes from './Routes/chatRoutes';
 import cookieParser from 'cookie-parser';
+
 
 
 const app = express()
