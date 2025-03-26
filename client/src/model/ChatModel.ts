@@ -6,7 +6,7 @@ export interface Chat {
     _id: string,
     job: Job,
     user: User,
-  messages: Message[], 
-  lastUpdated: Date
+    messages: Message[], 
+    lastUpdated: Date
 }
 

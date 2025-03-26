@@ -42,3 +42,29 @@ export async function applyToJob(req: any, res: any) {
     return res.status(500).json({ message: 'Server error' });
   }
 }
+
+
+export async function getUserJob(req: any, res: any) {
+  try {
+
+   
+    const {userId, jobId} = req.body; 
+
+    if (!userId || !jobId) {
+      return res.status(400).json({ message: "User ID or job Id not found" });
+    }
+
+    const userJob = await JobUserModel.findOne({ candidateId: userId, jobId: jobId }).populate('jobId')
+    console.log('saved jobs', userJob);
+
+    if (!userJob) {
+      return res.status(200).json({ message: "job not found" });
+    }
+
+
+    return res.status(200).json(userJob);
+  } catch (error) {
+    console.error("Error fetching saved job:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+}

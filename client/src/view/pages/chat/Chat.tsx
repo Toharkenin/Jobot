@@ -7,14 +7,16 @@ import { Paperclip } from 'lucide-react';
 import { Send } from 'lucide-react';
 import { CircleUserRound } from 'lucide-react';
 import { Message } from "../../../model/messageModel";
+import { Job } from "../../../model/jobModel";
 
 function Chat() {
-  const { job, user, chats, loading, messages, joinChatRoom, socket } = ChatMV();
+  const { job, user, chats, chat, loading, messages, joinChatRoom, socket } = ChatMV();
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
   const [messageInput, setMessageInput] = useState('');
   const [selectedChatMessages, setSelectedChatMessages] = useState<Message[]>([]);
-
+  const jobDetails: Job | undefined = job?.jobId as Job;
   if (loading) return <div className={styles.loading}>טוען...</div>;
+
 
   const handleOpenChat = async (chat: Chat) => {
     setSelectedChat(chat);
@@ -37,7 +39,6 @@ function Chat() {
 
       const data = await res.json();
       setSelectedChatMessages(data);
-      console.log("chat", data)
     } catch (err) {
       console.error("Failed to fetch messages", err);
     }
@@ -45,23 +46,25 @@ function Chat() {
 
   const handleSendClick = () => {
     if (messageInput.trim()) {
-      if (socket && socket.connected && job?._id && user?._id) {
+      console.log("selectedChat", selectedChat)
+      if (socket && socket.connected && job?.jobId && user?._id) {
         const newMessage = {
           userId: user._id,
-          jobId: job?._id,
+          jobId: selectedChat?.job?._id,
           content: messageInput.trim(),
           sentAt: new Date(),
           isRead: false,
         };
 
-        setSelectedChatMessages((prev) => [...prev, newMessage]);
+        setSelectedChatMessages((prev: any) => [...prev, newMessage]);
 
         socket.emit('send_message', newMessage);
       } else {
         console.warn("Socket is not connected. Message not sent via socket.");
       }
+      if (!user._id) return
 
-      sendMessage(user._id, job?._id, messageInput.trim());
+      sendMessage(user._id, selectedChat?.job?._id, messageInput.trim());
       setMessageInput('');
     }
   };
@@ -102,7 +105,7 @@ function Chat() {
 
         <div className={styles.chatList}>
           <h3 className={styles.chatListHeader}>צ׳אט</h3>
-          {Array.isArray(chats) && chats.map((chat, index) => (
+          {Array.isArray(chats) && chats.slice().reverse().map((chat, index) => (
             <div key={index} className={styles.chatListItem} onClick={() => handleOpenChat(chat)}>
               <div className={styles.chatInfo}>
                 <CircleUserRound className={styles.userIcon} />
@@ -128,12 +131,12 @@ function Chat() {
         <div className={styles.sidebar}>
           <div className={styles.header}>
             <div>
-              {job && (
+              {jobDetails && (
                 <div className={styles.jobPreview}>
                   <div className={styles.jobInfo}>
-                    <h2>{job?.company}</h2>
-                    <div className={styles.jobTitle}>{job.jobName} • {job.location}</div>
-                    <div className={styles.jobPrice}>₪{job?.salary}</div>
+                    <h2>{jobDetails.company}</h2>
+                    <div className={styles.jobTitle}>{jobDetails.jobName} • {jobDetails.location}</div>
+                    <div className={styles.jobPrice}>₪{jobDetails.salary}</div>
                   </div>
                 </div>
               )}

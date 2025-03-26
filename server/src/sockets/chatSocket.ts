@@ -12,6 +12,7 @@ export default function setupChatSocket(socket: Socket, io: Server) {
   });
 
   socket.on('join_chat', (jobId) => {
+    console.log('join-chat', jobId);
     socket.join(jobId);
   });
 

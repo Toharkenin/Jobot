@@ -1,35 +1,35 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { UserState } from '../../models/user/userModel';
+import { User } from '../../model/userModel';
 
 
 
-const initialState: UserState = {
+const initialState: User = {
   _id: '',
   fullName: '',
   email: '',
   password: '',
   phoneNumber: '',
-  experienceOfWork: {},
+  aiData: '',
+  workExperience: '',
   isHiring: false,
   isCandidate: false,
-  CV: '',
 }
 
 export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<UserState>) => {
+    setUser: (state, action: PayloadAction<User>) => {
       state._id = action.payload._id;
       state.fullName = action.payload.fullName;
       state.email = action.payload.email;
       state.password = action.payload.password;
       state.phoneNumber = action.payload.phoneNumber;
-      state.experienceOfWork = action.payload.experienceOfWork;
-      state.isHiring = action.payload.isHiring;
+      state.aiData = action.payload.aiData;
+      state.workExperience = action.payload.workExperience;
       state.isCandidate = action.payload.isCandidate;
-      state.CV = action.payload.CV;
+      state.isHiring = action.payload.isHiring;
     },
     clearUser: (state) => {
       state._id = '';
@@ -37,16 +37,16 @@ export const userSlice = createSlice({
       state.email = '';
       state.password = '';
       state.phoneNumber = '';
-      state.isHiring = false;
+      state.aiData = '';
+      state.workExperience = '';
       state.isCandidate = false;
-      state.experienceOfWork = {};
-      state.CV = '';
+      state.isHiring = false;
     },
   },
 })
 
 export const { setUser, clearUser } = userSlice.actions;
 
-export const userSelector = (state: { user: UserState }) => state.user;
+export const userSelector = (state: { user: User }) => state.user;
 
 export default userSlice.reducer

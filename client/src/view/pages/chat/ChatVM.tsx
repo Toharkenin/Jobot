@@ -5,19 +5,24 @@ import { useSelector } from "react-redux";
 import { userSelector } from "../../../redux/user/userSlice";
 import { Chat } from "../../../model/ChatModel";
 import { io, Socket } from "socket.io-client";
+import { JobApplication } from "../../../model/jobApplication";
 
 export function ChatMV() {
   const user = useSelector(userSelector);
   const { jobId } = useParams();
-  const [job, setJob] = useState<Job>();
+  const [job, setJob] = useState<JobApplication>();
+  const [chat, setChat] = useState<Chat>();
   const [chats, setChats] = useState<Chat[]>();
   const [loading, setLoading] = useState<boolean>(true);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [messages, setMessages] = useState<string[]>([]);
 
+  //TODO ---- change the employer ID,, check if employer is a user and chang it 
+  //TODO - Make it work together
+
+
   useEffect(() => {
     const socketInstance = io("http://localhost:3000", {
-      // withCredentials: true,
       transports: ["websocket"],
       reconnection: true,
     });
@@ -46,37 +51,44 @@ export function ChatMV() {
   }, [socket]);
 
 
-  // Fetching job and chats when the component is mounted
   useEffect(() => {
     const fetchData = async () => {
-      if (jobId) await fetchJob(jobId);
-      if (user?._id) await fetchAllChats(user._id);
+      if (jobId && user?._id) {
+        const jobData = await fetchJob(jobId, user._id);
+        if (jobData) {
+          setJob(jobData);
+          await fetchAllChats(user._id, jobData.jobId);
+        }
+      }
       setLoading(false);
     };
+
     fetchData();
   }, [jobId, user]);
 
 
   // Fetch job details
-  async function fetchJob(jobId: string | undefined) {
+  async function fetchJob(jobId: string | undefined, userId: string) {
     try {
-      const response = await fetch(`http://localhost:3000/api/jobs/get-job-by-id/${jobId}`, {
-        method: "GET",
+      const response = await fetch(`http://localhost:3000/api/userJob/get-user-job`, {
+        method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ userId, jobId }),
       });
       const data = await response.json();
-      console.log("Fetched Job:", data);
-      setJob(data);
+      console.log("job data..", data, data.job)
+      return data; // Return fetched job data
     } catch (error) {
       console.error("Error fetching job:", error);
+      return null;
     }
   }
 
   // Fetch all chats for the user
-  async function fetchAllChats(userId: string) {
+  async function fetchAllChats(userId: string, jobDetails: Job) {
     try {
       const response = await fetch(`http://localhost:3000/api/chat/get-chats`, {
         method: "POST",
@@ -87,8 +99,31 @@ export function ChatMV() {
         body: JSON.stringify({ userId }),
       });
       const data = await response.json();
+
       setChats(data);
-      console.log("Fetched chats:", data);
+      const existingChat = data.find(
+        (chat: Chat) => chat.job && chat.user && chat.job._id === jobId && chat.user._id === userId
+      );
+
+      if (!jobDetails) {
+        console.error("Job details are undefined, cannot create chat");
+        return
+      }
+
+      if (existingChat !== undefined) {
+        setChat(existingChat);
+      } else {
+        const newChat: Chat = {
+          _id: `temp-${Date.now()}`,
+          job: jobDetails,
+          user: user,
+          messages: [],
+          lastUpdated: new Date(),
+        };
+        setChats((prevChats: any) => [...prevChats, newChat]);
+        setChat(newChat);
+      }
+
     } catch (error) {
       console.error("Error fetching chats:", error);
     }
@@ -97,7 +132,7 @@ export function ChatMV() {
   // Join room on selecting a chat
   const joinChatRoom = (chat: Chat) => {
     if (socket && chat?.job?._id) {
-      socket.emit("join_room", chat.job._id);
+      socket.emit("join_chat", chat.job._id);
     }
   };
 
@@ -123,6 +158,7 @@ export function ChatMV() {
     job,
     user,
     chats,
+    chat,
     loading,
     messages,
     joinChatRoom,
